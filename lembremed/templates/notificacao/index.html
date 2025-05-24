@@ -5,31 +5,41 @@
 {% block title %}LembreMED - Notificações{% endblock %}
 
 {% block content %}
-<main class="main-content">
-	<section class="list-container">
-		<h2 class="section-title">Notificações</h2>
-		{% if estoque_acabando %}
-			<div class="list-cards">
-				{% for estoque in estoque_acabando %}
-					<div class="list-card">
-						<div class="card-info">
-							<p><strong>Estoque acabando!</strong></p>
-							<p>Hóspede: <strong>{{ estoque.morador.nome }}</strong></p>
-							<p>Medicamento: <span><strong>{{ estoque.medicamento.principio }}</strong> {{ estoque.apresentacao.unidade_prescricao }}</span></p>
-							<p>Duração do estoque: <span><strong>{{ estoque.estimativa_duracao|floatformat:0 }}</strong> dia(s)</span></p>
-						</div>
-						<!-- div class="list-actions">
-							<button class="btn btn-primary" 
-							onclick="carregar_pagina_popup('/medicamento/{{ estoque.morador.cpf }}/editar/{{ estoque.codigo }}', 'GET', {}, 'Alterar {{ estoque.medicamento.principio }}'); setTimeout(function() { $('#form_estoque').attr('action', '/medicamento/{{ estoque.morador.cpf }}/salvar/')}, 950) ">
-							Editar</button>
-						</div -->
-					</div>
-				{% endfor %}
-			</div>
-		{% else %}
-			<p class="no-items-list">Nenhuma notificação :)</p>
-		{% endif %}
-	</section>
-</main>
-
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header" style="background-color: #298377; color: white;">
+                    <i class="bi bi-bell me-2"></i>Notificações
+                </div>
+                <div class="card-body">
+                    {% if estoque_acabando %}
+                        <div class="list-group">
+                            {% for estoque in estoque_acabando %}
+                                <div class="list-group-item border-0 mb-2 shadow-sm">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                                                <strong>Estoque acabando!</strong>
+                                            </div>
+                                            <p class="mb-1">Hóspede: <strong>{{ estoque.morador.nome }}</strong></p>
+                                            <p class="mb-1">Medicamento: <strong>{{ estoque.medicamento.principio }}</strong> {{ estoque.apresentacao.unidade_prescricao }}</p>
+                                            <p class="mb-0">Duração do estoque: <strong>{{ estoque.estimativa_duracao|floatformat:0 }}</strong> dia(s)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Nenhuma notificação :)</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

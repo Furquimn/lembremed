@@ -554,3 +554,6 @@ def heatmap_erro_turno(request, contexto_padrao):
     except Exception as e:
         print(f"Erro ao gerar heatmap de erros por turno: {str(e)}")
         return JsonResponse({"erro": str(e)}, status=500)
+
+def heatmap_erro_turno(request):
+    return render(request, 'lembremed/heatmap_turno_erro.html')

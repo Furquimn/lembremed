@@ -1,17 +1,96 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-4">
-    <h2>Análise de Erros por Turno</h2>
-    <div class="card">
-        <div class="card-body">
-            {{ grafico | safe }}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header" style="background-color: #298377; color: white;">
+                    <i class="bi bi-graph-up me-2"></i>Análise de Erros por Turno
+                </div>
+                <div class="card-body" style="padding: 1.5rem;">
+                    <div id="heatmapContainer" style="width: 100%; position: relative;">
+                        <div class="text-center py-4">
+                            <div class="spinner-border" style="color: #298377;" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<style>
-.card {
-	height: initial !important;
-}
-</style>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const updateGraph = () => {
+        const container = document.getElementById('heatmapContainer');
+        const cardBody = container.closest('.card-body');
+        
+        fetch('{% url "heatmap_data" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+
+                // Calculate dimensions based on card body
+                const containerWidth = cardBody.offsetWidth - 40; // Subtract padding
+                const containerHeight = 350; // Fixed height for better proportions
+
+                const layout = {
+                    height: containerHeight,
+                    width: containerWidth,
+                    margin: {
+                        l: 100,  // Increased left margin for y-axis labels
+                        r: 50,
+                        t: 30,
+                        b: 60   // Increased bottom margin for x-axis labels
+                    },
+                    font: {
+                        family: 'Arial, sans-serif',
+                        size: 12
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    xaxis: {
+                        title: 'Tipo de Erro',
+                        titlefont: { size: 14 }
+                    },
+                    yaxis: {
+                        title: 'Período do Dia',
+                        titlefont: { size: 14 }
+                    }
+                };
+
+                const config = {
+                    responsive: true,
+                    displayModeBar: false,
+                    staticPlot: false
+                };
+
+                Plotly.newPlot('heatmapContainer', data.plot_data, layout, config);
+            })
+            .catch(error => {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Erro ao carregar dados. Tente atualizar a página.
+                    </div>
+                `;
+                console.error('Error:', error);
+            });
+    };
+
+    // Initial load
+    updateGraph();
+
+    // Update on resize with debounce
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateGraph, 250);
+    });
+});
+</script>
 {% endblock %}
