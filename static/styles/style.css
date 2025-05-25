@@ -72,6 +72,15 @@
     background-color: transparent
 }
 
+.card-heathmap {
+    width: auto;
+    height: auto;
+    margin: 50px 10px 50px 10px;
+    padding: 16px;
+    border: #028B2F solid 4px;
+    border-radius: 30px;
+    background-color: transparent
+}
 
 
 
